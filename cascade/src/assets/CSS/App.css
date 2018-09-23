@@ -14,7 +14,13 @@
   justify-content: space-around;
 }
 .total-hours-month {
-  margin: 10px;
+  width: 500px;
+  margin: 10px auto 0 auto;
+  border: 1px solid rgb(83, 83, 83);
+  background-color: white;
+}
+.total-hours-month p {
+  margin: 5px 0;
 }
 
 button {
@@ -28,6 +34,10 @@ button:hover {
   background-color: rgb(123, 207, 255);
 }
 .sponsored-by {
-  position: relative;
-  bottom: 0;
+  margin-top: 20px;
+}
+.sponsored-by.no-data {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
 }
