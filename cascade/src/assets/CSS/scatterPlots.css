@@ -1,7 +1,10 @@
-.scatter-plots {
+.scatter-plots.container {
   display: flex;
   justify-content: space-around;
+  flex-flow: row wrap;
+  width: 100%;
 }
+
 .scatter-plot {
 }
 .scatter-plot.container {
@@ -9,12 +12,15 @@
   flex-flow: column;
   text-align: center;
   position: relative;
-  border: 1px solid black;
+  border: 1px solid rgb(83, 83, 83);
+  width: 25%;
+  background-color: white;
+  margin: 20px 5px;
 }
 
 .scatter-plot.y-axis-label {
   position: absolute;
   top: 50%;
-  left: -15%;
+  left: -10%;
   transform: rotateZ(-90deg);
 }
