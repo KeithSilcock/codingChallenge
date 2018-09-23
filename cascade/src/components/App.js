@@ -193,11 +193,19 @@ class App extends Component {
       ) : null;
 
     const darkSkyInfoDisplay = dataHasBeenLoaded ? (
-      <a className="sponsored-by" href="https://darksky.net/poweredby/">
+      <a
+        className="sponsored-by"
+        href="https://darksky.net/poweredby/"
+        target="_blank"
+      >
         Powered by Dark Sky
       </a>
     ) : (
-      <a className="sponsored-by no-data" href="https://darksky.net/poweredby/">
+      <a
+        className="sponsored-by no-data"
+        href="https://darksky.net/poweredby/"
+        target="_blank"
+      >
         Powered by Dark Sky
       </a>
     );
@@ -206,7 +214,7 @@ class App extends Component {
       <div className="App">
         <div className="header">
           <div className="header-image">
-            <a href="https://cascadeenergy.com/">
+            <a href="https://cascadeenergy.com/" target="_blank">
               <img
                 src="http://cascadeenergy.com/wp-content/uploads/2018/04/cascade-energy-logo-2.png"
                 alt=""
