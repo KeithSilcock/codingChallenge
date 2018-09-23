@@ -1,6 +1,6 @@
 # Coding Challege
 
-# To run
+## To run
 
     - Clone repository
     - Get an API Key from [Dark Sky](https://darksky.net/dev/docs)
