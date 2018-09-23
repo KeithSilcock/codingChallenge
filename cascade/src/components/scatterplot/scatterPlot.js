@@ -76,14 +76,14 @@ class ScatterPlot extends React.Component {
                 x2={width}
                 y1={y(temp.min)}
                 y2={y(temp.min)}
-                style={{ stroke: "black", strokeWidth: "2" }}
+                style={scatterPlotInfo.lineStyle}
               />
               <line
                 x1={0}
                 x2={width}
                 y1={y(temp.max)}
                 y2={y(temp.max)}
-                style={{ stroke: "black", strokeWidth: "2" }}
+                style={scatterPlotInfo.lineStyle}
               />
               <Axis
                 axis="x"

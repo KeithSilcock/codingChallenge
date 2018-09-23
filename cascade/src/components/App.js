@@ -15,8 +15,8 @@ class App extends Component {
     this.state = {
       data: {},
       month: 8,
-      hoursOn: 0,
-      hoursTotal: 0,
+      hoursOnThisMonth: 0,
+      hoursTotalThisMonth: 0,
       year: 2018,
       date: new Date("2018-01-01"),
       temp: { min: 62, max: 75 },
@@ -26,11 +26,12 @@ class App extends Component {
           height: 150
         },
         range: { x: null, y: { min: 30, max: 90 } },
-        margin: { top: 5, right: 10, bottom: 20, left: 60 },
+        margin: { top: 5, right: 20, bottom: 20, left: 50 },
         dots: {
-          size: 2
+          size: 3
         },
-        ticks: { x: 5, y: 5 }
+        ticks: { x: 5, y: 5 },
+        lineStyle: { stroke: "black", strokeWidth: "1" }
       }
     };
 
@@ -41,7 +42,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // this.updateHVACOnTime(dummData);
+    //  this.addHoursHVACOnAndUpdateTotal(dummyData);
   }
 
   getDataForDay(day) {
@@ -53,13 +54,13 @@ class App extends Component {
     axios
       .get(apiPath)
       .then(response => {
-        this.updateHVACOnTime(response.data);
+        const updatedData = this.addHoursHVACOnAndUpdateTotal(response.data);
 
         this.setState({
           ...this.state,
           data: {
             ...this.state.data,
-            [day]: response.data
+            [day]: updatedData
           }
         });
       })
@@ -70,10 +71,10 @@ class App extends Component {
       });
   }
 
-  updateHVACOnTime(data) {
-    const { temp, hoursTotal } = this.state;
-    //reduce numbers of on vs off
-    const hoursOn = data.hourly.data.reduce((acc, cur) => {
+  addHoursHVACOnAndUpdateTotal(data) {
+    const { temp, hoursOnThisMonth, hoursTotalThisMonth } = this.state;
+    //reduce numbers of on vs off and add to state
+    const hoursOnToday = data.hourly.data.reduce((acc, cur) => {
       if (cur.temperature < temp.min || cur.temperature > temp.max) {
         return acc + 1;
       }
@@ -81,25 +82,15 @@ class App extends Component {
     }, 0);
     this.setState({
       ...this.state,
-      hoursOn,
-      hoursTotal: hoursTotal + data.hourly.data.length
+      hoursOnThisMonth: hoursOnToday + hoursOnThisMonth,
+      hoursTotalThisMonth: hoursTotalThisMonth + data.hourly.data.length
     });
+    return { ...data, hoursOnToday };
   }
-
-  // changeDate(e) {
-  //   const date = new Date(e.target.value + "T00:00:00");
-
-  //   //get new data
-  //   this.getDataForDay(date);
-
-  //   this.setState({
-  //     ...this.state,
-  //     date: date.getTime()
-  //   });
-  // }
 
   inputChange(e) {
     const { name, value } = e.target;
+    debugger;
     this.setState({
       ...this.state,
       [name]: value
@@ -110,14 +101,27 @@ class App extends Component {
     const { month, year } = this.state;
     const days = getDaysOfMonth(month, year);
 
-    for (let dayIndex = 0; dayIndex < 3 /*days.length*/; dayIndex++) {
+    this.setState({
+      ...this.state,
+      hoursOnThisMonth: 0,
+      hoursTotalThisMonth: 0
+    });
+
+    for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
       const day = days[dayIndex];
       this.getDataForDay(day);
     }
   }
 
   render() {
-    const { data, year, month, scatterPlot } = this.state;
+    const {
+      data,
+      year,
+      month,
+      scatterPlot,
+      hoursOnThisMonth,
+      hoursTotalThisMonth
+    } = this.state;
 
     //format and sort data from object of date to array
     const listOfDataPoints = Object.keys(data)
@@ -135,6 +139,9 @@ class App extends Component {
         <div className="scatter-plot container">
           <p className="scatter-plot name">{`${date.getFullYear()}/${date.getMonth() +
             1}/${date.getDate()}`}</p>
+          <span className="time-on">
+            Total Operating Time: {dayInfo.hoursOnToday} h
+          </span>
           <span className="scatter-plot y-axis-label">
             Temperature (&deg;F)
           </span>
@@ -144,40 +151,71 @@ class App extends Component {
       );
     });
 
-    const date = new Date();
+    const yearSelect = [];
+    for (let year = new Date().getFullYear(); year > 2005; year--) {
+      const option = <option value={`${year}`}>{year}</option>;
+      yearSelect.push(option);
+    }
+
+    const hoursOn = Object.keys(data).length ? (
+      <p className="total-hours-month">
+        Total Hours On this Month: {hoursOnThisMonth} / {hoursTotalThisMonth}
+        <p>
+          {((hoursOnThisMonth / hoursTotalThisMonth) * 100).toFixed(2)}% On Time
+        </p>
+      </p>
+    ) : null;
 
     return (
       <div className="App">
-        <label htmlFor="month">Month</label>
-        <input
-          type="number"
-          name="month"
-          value={month}
-          onChange={e => this.inputChange(e)}
-          className="month"
-        />
-        <label htmlFor="year">Year</label>
-        <input
-          type="number"
-          name="year"
-          value={year}
-          onChange={e => this.inputChange(e)}
-          className="year"
-        />
-        <button onClick={e => this.submitNewMonthRequest(e)}>
-          Request new month
-        </button>
-        {/* <input
-          name={"date"}
-          type="date"
-          value="2018-01-01"
-          // onChange={e => this.changeDate(e)}
-        /> */}
-        {/* <FetchData /> */}
-        {/* <ScatterPlot currentData={data} /> */}
+        <div className="header">
+          <div className="header-image">
+            <a href="https://cascadeenergy.com/">
+              <img
+                src="http://cascadeenergy.com/wp-content/uploads/2018/04/cascade-energy-logo-2.png"
+                alt=""
+              />
+            </a>
+          </div>
+        </div>
+        <div className="inputs">
+          <select
+            className="months"
+            name="month"
+            onChange={e => this.inputChange(e)}
+            value={month}
+          >
+            {/* <option value="">--Select Month--</option> */}
+            <option value="1">Janaury</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select
+            className="years"
+            name="year"
+            value={year}
+            onChange={e => this.inputChange(e)}
+          >
+            {/* <option value="">--Select Year--</option> */}
+            {yearSelect}
+          </select>
 
+          <button onClick={e => this.submitNewMonthRequest(e)}>
+            Request new month
+          </button>
+        </div>
+        {hoursOn}
         <div className="scatter-plots container">
-          <div className="scatter-plot container">
+          {/* <div className="scatter-plot container">
             <p className="scatter-plot name">{`${date.getFullYear()}/${date.getMonth() +
               1}/${date.getDate()}`}</p>
             <span className="scatter-plot y-axis-label">
@@ -188,10 +226,12 @@ class App extends Component {
               currentData={dummyData}
             />
             <span className="x-axis-label">Time (h)</span>
-          </div>
+          </div> */}
           {listOfScatterplots}
         </div>
-        <a href="https://darksky.net/poweredby/">Powered by Dark Sky</a>
+        <a className="sponsored-by" href="https://darksky.net/poweredby/">
+          Powered by Dark Sky
+        </a>
       </div>
     );
   }

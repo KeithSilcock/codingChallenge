@@ -1,2 +1,33 @@
 .App {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header {
+  text-align: left;
+  margin: 20px 0 0 20px;
+}
+.inputs {
+  width: 25%;
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+}
+.total-hours-month {
+  margin: 10px;
+}
+
+button {
+  background-color: #55ace0;
+  height: 40px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: rgb(123, 207, 255);
+}
+.sponsored-by {
+  position: relative;
+  bottom: 0;
 }
