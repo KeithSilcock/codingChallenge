@@ -1,2 +1,43 @@
 .App {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header {
+  text-align: left;
+  margin: 20px 0 0 20px;
+}
+.inputs {
+  width: 25%;
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+}
+.total-hours-month {
+  width: 500px;
+  margin: 10px auto 0 auto;
+  border: 1px solid rgb(83, 83, 83);
+  background-color: white;
+}
+.total-hours-month p {
+  margin: 5px 0;
+}
+
+button {
+  background-color: #55ace0;
+  height: 40px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: rgb(123, 207, 255);
+}
+.sponsored-by {
+  margin-top: 20px;
+}
+.sponsored-by.no-data {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
 }
