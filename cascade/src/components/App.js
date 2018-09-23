@@ -25,10 +25,12 @@ class App extends Component {
           width: 250,
           height: 150
         },
+        range: { x: null, y: { min: 30, max: 90 } },
         margin: { top: 5, right: 10, bottom: 20, left: 60 },
         dots: {
           size: 2
-        }
+        },
+        ticks: { x: 5, y: 5 }
       }
     };
 
@@ -117,15 +119,27 @@ class App extends Component {
   render() {
     const { data, year, month, scatterPlot } = this.state;
 
-    const listOfScatterplots = Object.keys(data).map((day, index) => {
-      const daysData = data[day];
-      const date = new Date(daysData.hourly.data[0].time * 1000);
+    //format and sort data from object of date to array
+    const listOfDataPoints = Object.keys(data)
+      .map((day, index) => {
+        return data[day];
+      })
+      .sort((a, b) => {
+        return a.hourly.data[0].time - b.hourly.data[0].time;
+      });
+
+    const listOfScatterplots = listOfDataPoints.map((dayInfo, index) => {
+      const date = new Date(dayInfo.hourly.data[0].time * 1000);
 
       return (
         <div className="scatter-plot container">
-          <p className="scatter-plot name">{`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}</p>
-          <span className="y-axis">Temperature (deg f)</span>
-          <ScatterPlot scatterPlotInfo={scatterPlot} currentData={daysData} />
+          <p className="scatter-plot name">{`${date.getFullYear()}/${date.getMonth() +
+            1}/${date.getDate()}`}</p>
+          <span className="scatter-plot y-axis-label">
+            Temperature (&deg;F)
+          </span>
+          <ScatterPlot scatterPlotInfo={scatterPlot} currentData={dayInfo} />
+          <span className="x-axis-label">Time (h)</span>
         </div>
       );
     });
@@ -164,7 +178,8 @@ class App extends Component {
 
         <div className="scatter-plots container">
           <div className="scatter-plot container">
-            <p className="scatter-plot name">{`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}</p>
+            <p className="scatter-plot name">{`${date.getFullYear()}/${date.getMonth() +
+              1}/${date.getDate()}`}</p>
             <span className="scatter-plot y-axis-label">
               Temperature (&deg;F)
             </span>

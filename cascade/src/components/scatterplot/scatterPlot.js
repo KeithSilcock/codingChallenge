@@ -1,7 +1,7 @@
 import React from "react";
 import RenderCircles from "./renderCirlces";
 import Axis from "./axis";
-import { scaleLinear, max, axisLeft, axisBottom, select } from "d3";
+import { scaleLinear, max, min, axisLeft, axisBottom, select } from "d3";
 
 import "../../assets/CSS/scatterPlots.css";
 
@@ -40,9 +40,15 @@ class ScatterPlot extends React.Component {
         .range([0, width]);
 
       const minHeightRange =
-        90 < max(data, d => d[1]) ? max(data, d => d[1]) : 90;
+        scatterPlotInfo.range.y.min > min(data, d => d[1])
+          ? min(data, d => d[1])
+          : scatterPlotInfo.range.y.min;
+      const maxHeightRange =
+        scatterPlotInfo.range.y.max < max(data, d => d[1])
+          ? max(data, d => d[1])
+          : scatterPlotInfo.range.y.max;
       const y = scaleLinear()
-        .domain([0, minHeightRange])
+        .domain([minHeightRange, maxHeightRange])
         .range([height, 0]);
 
       return (
@@ -82,12 +88,16 @@ class ScatterPlot extends React.Component {
               <Axis
                 axis="x"
                 transform={"translate(0," + height + ")"}
-                scale={axisBottom().scale(x)}
+                scale={axisBottom()
+                  .scale(x)
+                  .ticks(scatterPlotInfo.ticks.x)}
               />
               <Axis
                 axis="y"
                 transform="translate(0,0)"
-                scale={axisLeft().scale(y)}
+                scale={axisLeft()
+                  .scale(y)
+                  .ticks(scatterPlotInfo.ticks.y)}
               />
             </g>
           </svg>
